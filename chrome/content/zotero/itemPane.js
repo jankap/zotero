@@ -325,7 +325,7 @@ var ZoteroItemPane = new function() {
 	
 	
 	this.onTagsContextPopupShowing = function () {
-		if (!_lastItem.isEditable()) {
+		if (!_lastItem.editable) {
 			return false;
 		}
 	}

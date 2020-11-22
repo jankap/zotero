@@ -141,7 +141,7 @@ var Zotero_Duplicates_Pane = new function () {
 		}
 		
 		_masterItem = item;
-		itembox.item = item.clone();
+		itembox.item = item.clone(null, { includeCollections: true });
 	}
 	
 	
@@ -149,12 +149,7 @@ var Zotero_Duplicates_Pane = new function () {
 		var itembox = document.getElementById('zotero-duplicates-merge-item-box');
 		Zotero.CollectionTreeCache.clear();
 		// Update master item with any field alternatives from the item box
-		var json = _masterItem.toJSON();
-		// Exclude certain properties that are empty in the cloned object, so we don't clobber them
-		const { relations, collections, tags, ...keep } = itembox.item.toJSON();
-		Object.assign(json, keep);
-		
-		_masterItem.fromJSON(json);
+		_masterItem.fromJSON(itembox.item.toJSON());
 		Zotero.Items.merge(_masterItem, _otherItems);
 	});
 }

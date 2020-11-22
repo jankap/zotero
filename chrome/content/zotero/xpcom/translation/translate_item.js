@@ -359,13 +359,13 @@ Zotero.Translate.ItemSaver.prototype = {
 	 * Save pending snapshot attachments to disk and library
 	 *
 	 * @param {Array} pendingAttachments - A list of snapshot attachments
-	 * @param {Object} content - Snapshot content from SingleFile
+	 * @param {Object} pageData - Snapshot data from SingleFile
 	 * @param {Function} attachmentCallback - Callback with progress of attachments
 	 */
-	saveSnapshotAttachments: Zotero.Promise.coroutine(function* (pendingAttachments, snapshotContent, attachmentCallback) {
+	saveSnapshotAttachments: Zotero.Promise.coroutine(function* (pendingAttachments, pageData, attachmentCallback) {
 		for (let [parentItemID, attachment] of pendingAttachments) {
-			if (snapshotContent) {
-				attachment.snapshotContent = snapshotContent;
+			if (pageData) {
+				attachment.pageData = pageData;
 			}
 			yield this._saveAttachment(
 				attachment,
@@ -899,16 +899,16 @@ Zotero.Translate.ItemSaver.prototype = {
 		
 		attachmentCallback(attachment, 0);
 		
-		// Import from SingleFile content
-		if (attachment.snapshotContent) {
-			Zotero.debug('Importing attachment from SingleFile');
+		// Import from SingleFileZ Page Data
+		if (attachment.pageData) {
+			Zotero.debug('Importing attachment from SingleFileZ');
 
-			return Zotero.Attachments.importFromSnapshotContent({
+			return Zotero.Attachments.importFromPageData({
 				libraryID: this._libraryID,
 				title,
 				url: attachment.url,
 				parentItemID,
-				snapshotContent: attachment.snapshotContent,
+				pageData: attachment.pageData,
 				collections: !parentItemID ? this._collections : undefined,
 				saveOptions: this._saveOptions
 			});

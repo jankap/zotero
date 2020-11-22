@@ -691,8 +691,7 @@ Zotero.Utilities.Internal = {
 		
 		// Use SingleFile to retrieve the html
 		const pageData = await Components.utils.evalInSandbox(
-			`Zotero.SingleFile.runUserScripts();
-			this.singlefile.lib.getPageData(
+			`this.singlefile.lib.getPageData(
 				Zotero.SingleFile.CONFIG,
 				{ fetch: ZoteroFetch }
 			);`,

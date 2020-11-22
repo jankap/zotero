@@ -55,9 +55,8 @@ async function babelWorker(ev) {
 
 		// Patch single-file-helper
 		else if (sourcefile === 'resource/SingleFileZ/lib/single-file/single-file-helper.js') {
-			transformed = contents
-				.replace('dispatchEvent(', 'window.dispatchEvent(')
-				.replace(/addEventListener\(/g, 'window.addEventListener(');
+			transformed = contents.replace('addEventListener("single-filez-user-script-init"',
+				'window.addEventListener("single-filez-user-script-init"');
 		}
 		
 		// Patch index.js - This is a SingleFileZ issue. SingleFileZ does not typically use

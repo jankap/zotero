@@ -491,15 +491,11 @@ Zotero.DataDirectory = {
 						continue;
 					}
 					
-					// In a cloud storage folder (Dropbox, etc.)
-					if (Zotero.File.isCloudStorageFolder(file.path)) {
+					// In dropbox folder
+					if (Zotero.File.isDropboxDirectory(file.path)) {
 						dialogTitle = Zotero.getString('general.warning');
-						dialogText = Zotero.getString('dataDir.unsafeLocation.selected.cloud') + "\n\n"
-							+ file.path + "\n\n"
-							+ Zotero.getString('dataDir.unsafeLocation.selected.areYouSure');
-						moreInfoCallback = () => {
-							Zotero.launchURL('https://www.zotero.org/support/kb/data_directory_in_cloud_storage_folder');
-						};
+						dialogText = Zotero.getString('dataDir.unsafeLocation.selected.dropbox') + "\n\n"
+								+ Zotero.getString('dataDir.unsafeLocation.selected.useAnyway');
 					}
 					else if (file.directoryEntries.hasMoreElements()) {
 						let dbfile = file.clone();
@@ -609,24 +605,17 @@ Zotero.DataDirectory = {
 	
 	
 	checkForUnsafeLocation: Zotero.Promise.coroutine(function* (path) {
-		if (!this._warnOnUnsafeLocation || !Zotero.Prefs.get('warnOnUnsafeDataDir')) {
-			return;
-		}
-		
-		if (Zotero.File.isCloudStorageFolder(path)) {
+		if (this._warnOnUnsafeLocation && Zotero.File.isDropboxDirectory(path)
+				&& Zotero.Prefs.get('warnOnUnsafeDataDir')) {
 			this._warnOnUnsafeLocation = false;
 			let check = {value: false};
-			let ps = Services.prompt;
 			let index = Services.prompt.confirmEx(
 				null,
 				Zotero.getString('general.warning'),
-				Zotero.getString('dataDir.unsafeLocation.existing.cloud', Zotero.appName) + "\n\n"
-					+ path + "\n\n"
+				Zotero.getString('dataDir.unsafeLocation.existing.dropbox') + "\n\n"
 					+ Zotero.getString('dataDir.unsafeLocation.existing.chooseDifferent'),
-				ps.STD_YES_NO_BUTTONS
-					+ ps.BUTTON_POS_2 * ps.BUTTON_TITLE_IS_STRING,
-				null, null,
-				Zotero.getString('general.moreInformation'),
+				Services.prompt.STD_YES_NO_BUTTONS,
+				null, null, null,
 				Zotero.getString('general.dontShowWarningAgain'),
 				check
 			);
@@ -634,9 +623,6 @@ Zotero.DataDirectory = {
 			// Yes - display dialog.
 			if (index == 0) {
 				yield this.choose(true);
-			}
-			else if (index == 2) {
-				Zotero.launchURL('https://www.zotero.org/support/kb/data_directory_in_cloud_storage_folder');
 			}
 			if (check.value) {
 				Zotero.Prefs.set('warnOnUnsafeDataDir', false);

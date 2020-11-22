@@ -995,10 +995,6 @@ Zotero.Utilities.Internal = {
 			let [_, originalField, value] = parts;
 			let key = this._normalizeExtraKey(originalField);
 			value = value.trim();
-			// Skip empty values
-			if (value === "") {
-				return [null, null];
-			}
 			return [key, value];
 		};
 		

@@ -538,13 +538,14 @@ Zotero.TagSelector = class TagSelectorContainer extends React.PureComponent {
 				return;
 			}
 			
+			// Store the event, because drop event does not have shiftKey attribute set
+			Zotero.DragDrop.currentEvent = event;
 			elem.classList.add('dragged-over');
 			event.preventDefault();
-			// Don't show + cursor when removing tags
-			var remove = (Zotero.isMac && event.metaKey) || (!Zotero.isMac && event.shiftKey);
-			event.dataTransfer.dropEffect = remove ? "move" : "copy";
+			event.dataTransfer.dropEffect = "copy";
 		},
 		onDragExit: function (event) {
+			Zotero.DragDrop.currentEvent = null;
 			event.target.classList.remove('dragged-over');
 		},
 		onDrop: async function(event) {
@@ -563,9 +564,6 @@ Zotero.TagSelector = class TagSelectorContainer extends React.PureComponent {
 				return;
 			}
 			
-			// Remove tags on Cmd-drag/Shift-drag
-			var remove = (Zotero.isMac && event.metaKey) || (!Zotero.isMac && event.shiftKey);
-			
 			return Zotero.DB.executeTransaction(function* () {
 				ids = ids.split(',');
 				var items = Zotero.Items.get(ids);
@@ -573,10 +571,9 @@ Zotero.TagSelector = class TagSelectorContainer extends React.PureComponent {
 				
 				for (let i=0; i<items.length; i++) {
 					let item = items[i];
-					if (remove) {
+					if (Zotero.DragDrop.currentEvent.shiftKey) {
 						item.removeTag(value);
-					}
-					else {
+					} else {
 						item.addTag(value);
 					}
 					yield item.save();

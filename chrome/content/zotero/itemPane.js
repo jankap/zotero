@@ -190,8 +190,7 @@ var ZoteroItemPane = new function() {
 					ref={_tagsBox}
 					onResetSelection={focusItemsList}
 				/>,
-				document.getElementById('tags-box-container'),
-				() => ZoteroPane.updateTagsBoxSize()
+				document.getElementById('tags-box-container')
 			);
 		}
 		

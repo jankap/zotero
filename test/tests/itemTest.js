@@ -1914,7 +1914,7 @@ describe("Zotero.Item", function () {
 				assert.equal(item.getField('extra'), '');
 			});
 			
-			it("should ignore some redundant fields from RDF translator (temporary)", function () {
+			it("should ignore versionNumber for books", async function () {
 				var json = {
 					itemType: "book",
 					edition: "1",
@@ -1923,36 +1923,6 @@ describe("Zotero.Item", function () {
 				var item = new Zotero.Item;
 				item.fromJSON(json);
 				assert.equal(item.getField('edition'), "1");
-				assert.equal(item.getField('extra'), '');
-				
-				json = {
-					itemType: "presentation",
-					meetingName: "Foo",
-					conferenceName: "Foo"
-				};
-				var item = new Zotero.Item;
-				item.fromJSON(json);
-				assert.equal(item.getField('meetingName'), "Foo");
-				assert.equal(item.getField('extra'), '');
-				
-				json = {
-					itemType: "journalArticle",
-					publicationTitle: "Foo",
-					reporter: "Foo"
-				};
-				var item = new Zotero.Item;
-				item.fromJSON(json);
-				assert.equal(item.getField('publicationTitle'), "Foo");
-				assert.equal(item.getField('extra'), '');
-				
-				json = {
-					itemType: "conferencePaper",
-					proceedingsTitle: "Foo",
-					reporter: "Foo"
-				};
-				var item = new Zotero.Item;
-				item.fromJSON(json);
-				assert.equal(item.getField('proceedingsTitle'), "Foo");
 				assert.equal(item.getField('extra'), '');
 			});
 		});

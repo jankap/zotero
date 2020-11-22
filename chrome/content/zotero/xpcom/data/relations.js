@@ -121,9 +121,9 @@ Zotero.Relations = new function () {
 	 * @param {String} objectType - Type of relation to search for (e.g., 'item')
 	 * @param {String} predicate
 	 * @param {String} object
-	 * @return {Promise<Zotero.DataObject[]>}
+	 * @return {Zotero.DataObject[]}
 	 */
-	this.getByPredicateAndObject = async function (objectType, predicate, object) {
+	this.getByPredicateAndObject = function (objectType, predicate, object) {
 		var objectsClass = Zotero.DataObjectUtilities.getObjectsClassForObjectType(objectType);
 		if (predicate) {
 			predicate = this._getPrefixAndValue(predicate).join(':');
@@ -135,7 +135,7 @@ Zotero.Relations = new function () {
 		if (!o || !o[predicateID] || !o[predicateID][object]) {
 			return [];
 		}
-		return objectsClass.getAsync(Array.from(o[predicateID][object].values()));
+		return objectsClass.get(Array.from(o[predicateID][object].values()));
 	};
 	
 	

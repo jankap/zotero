@@ -263,7 +263,6 @@ Zotero.Attachments = new function(){
 	
 	/**
 	 * @param {Object} options - 'file', 'url', 'title', 'contentType', 'charset', 'parentItemID', 'singleFile'
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
 	 * @return {Promise<Zotero.Item>}
 	 */
 	this.importSnapshotFromFile = Zotero.Promise.coroutine(function* (options) {
@@ -280,7 +279,6 @@ Zotero.Attachments = new function(){
 		var contentType = options.contentType;
 		var charset = options.charset;
 		var parentItemID = options.parentItemID;
-		var saveOptions = options.saveOptions;
 		
 		if (!parentItemID) {
 			throw new Error("parentItemID not provided");
@@ -304,7 +302,7 @@ Zotero.Attachments = new function(){
 				// DEBUG: this should probably insert access date too so as to
 				// create a proper item, but at the moment this is only called by
 				// translate.js, which sets the metadata fields itself
-				itemID = yield attachmentItem.save(saveOptions);
+				itemID = yield attachmentItem.save();
 				
 				var storageDir = Zotero.getStorageDirectory();
 				destDir = this.getStorageDirectory(attachmentItem);
@@ -363,7 +361,7 @@ Zotero.Attachments = new function(){
 	 * @param {String} [options.contentType]
 	 * @param {String} [options.referrer]
 	 * @param {CookieSandbox} [options.cookieSandbox]
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
+	 * @param {Object} [options.saveOptions]
 	 * @return {Promise<Zotero.Item>} - A promise for the created attachment item
 	 */
 	this.importFromURL = Zotero.Promise.coroutine(function* (options) {
@@ -533,7 +531,7 @@ Zotero.Attachments = new function(){
 	 * @param {String} [options.title]
 	 * @param {String} options.contentType
 	 * @param {String[]} [options.collections]
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
+	 * @param {Object} [options.saveOptions]
 	 * @return {Zotero.Item}
 	 */
 	this.createURLAttachmentFromTemporaryStorageDirectory = async function (options) {
@@ -597,7 +595,6 @@ Zotero.Attachments = new function(){
 	 * Create a link attachment from a URL
 	 *
 	 * @param {Object} options - 'url', 'parentItemID', 'contentType', 'title', 'collections'
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
 	 * @return {Promise<Zotero.Item>} - A promise for the created attachment item
 	 */
 	this.linkFromURL = Zotero.Promise.coroutine(function* (options) {
@@ -608,7 +605,6 @@ Zotero.Attachments = new function(){
 		var contentType = options.contentType;
 		var title = options.title;
 		var collections = options.collections;
-		var saveOptions = options.saveOptions;
 		
 		var schemeRE = /^([a-z][a-z0-9+.-]+):/;
 		var matches = url.match(schemeRE);
@@ -661,8 +657,7 @@ Zotero.Attachments = new function(){
 			linkMode: this.LINK_MODE_LINKED_URL,
 			contentType,
 			parentItemID,
-			collections,
-			saveOptions,
+			collections
 		});
 	});
 	
@@ -671,7 +666,6 @@ Zotero.Attachments = new function(){
 	 * TODO: what if called on file:// document?
 	 *
 	 * @param {Object} options - 'document', 'parentItemID', 'collections'
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
 	 * @return {Promise<Zotero.Item>}
 	 */
 	this.linkFromDocument = Zotero.Promise.coroutine(function* (options) {
@@ -680,7 +674,6 @@ Zotero.Attachments = new function(){
 		var document = options.document;
 		var parentItemID = options.parentItemID;
 		var collections = options.collections;
-		var saveOptions = options.saveOptions;
 		
 		if (parentItemID && collections) {
 			throw new Error("parentItemID and collections cannot both be provided");
@@ -697,8 +690,7 @@ Zotero.Attachments = new function(){
 			contentType,
 			charset: document.characterSet,
 			parentItemID,
-			collections,
-			saveOptions,
+			collections
 		});
 		
 		if (Zotero.Fulltext.isCachedMIMEType(contentType)) {
@@ -717,7 +709,6 @@ Zotero.Attachments = new function(){
 	 * Save a snapshot from a Document
 	 *
 	 * @param {Object} options - 'libraryID', 'document', 'parentItemID', 'forceTitle', 'collections'
-	 * @param {Object} [options.saveOptions] - Options to pass to Zotero.Item::save()
 	 * @return {Promise<Zotero.Item>} - A promise for the created attachment item
 	 */
 	this.importFromDocument = Zotero.Promise.coroutine(function* (options) {
@@ -728,7 +719,6 @@ Zotero.Attachments = new function(){
 		var parentItemID = options.parentItemID;
 		var title = options.title;
 		var collections = options.collections;
-		var saveOptions = options.saveOptions;
 		
 		if (parentItemID && collections) {
 			throw new Error("parentItemID and parentCollectionIDs cannot both be provided");
@@ -806,7 +796,7 @@ Zotero.Attachments = new function(){
 					attachmentItem.setCollections(collections);
 				}
 				attachmentItem.attachmentPath = 'storage:' + fileName;
-				var itemID = yield attachmentItem.save(saveOptions);
+				var itemID = yield attachmentItem.save();
 				
 				Zotero.Fulltext.queueItem(attachmentItem);
 				

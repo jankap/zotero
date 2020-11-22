@@ -281,7 +281,7 @@ var Zotero_File_Interface = new function() {
 		args.wrappedJSObject = args;
 		
 		Services.ww.openWindow(null, "chrome://zotero/content/import/importWizard.xul",
-			"importFile", "chrome,dialog=yes,centerscreen,width=600,height=400,modal", args);
+			"importFile", "chrome,dialog=yes,centerscreen,width=600,height=400", args);
 	};
 	
 	
@@ -514,15 +514,12 @@ var Zotero_File_Interface = new function() {
 			yield onBeforeImport(translation);
 		}
 		
-		var notifierQueue = new Zotero.Notifier.Queue;
+		let failed = false;
 		try {
 			yield translation.translate({
 				libraryID,
 				collections: importCollection ? [importCollection.id] : null,
-				linkFiles,
-				saveOptions: {
-					notifierQueue
-				}
+				linkFiles
 			});
 		} catch(e) {
 			if (!showProgressWindow) {
@@ -537,9 +534,6 @@ var Zotero_File_Interface = new function() {
 				Zotero.getString("fileInterface.importError")
 			);
 			return false;
-		}
-		finally {
-			yield Zotero.Notifier.commit(notifierQueue);
 		}
 		
 		var numItems = translation.newItems.length;

@@ -1313,7 +1313,7 @@ var Zotero_QuickFormat = new function () {
 		
 		// Move bubble
 		var range = document.createRange();
-		range.setStartAfter(event.rangeParent);
+		range.setStartBefore(event.rangeParent);
 		dragging.parentNode.removeChild(dragging);
 		var bubble = _insertBubble(JSON.parse(dragging.dataset.citationItem), range);
 

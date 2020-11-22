@@ -30,8 +30,7 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<popupset>
-		<menupopup id="tags-context-menu"
-				onpopupshowing="return ZoteroItemPane.onTagsContextPopupShowing()">
+		<menupopup id="tags-context-menu">
 			<menuitem id="remove-all-item-tags" label="&zotero.item.tags.removeAll;"
 				oncommand="ZoteroItemPane.removeAllTags()"/>
 		</menupopup>

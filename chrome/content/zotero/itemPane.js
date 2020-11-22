@@ -324,13 +324,6 @@ var ZoteroItemPane = new function() {
 	}
 	
 	
-	this.onTagsContextPopupShowing = function () {
-		if (!_lastItem.editable) {
-			return false;
-		}
-	}
-	
-	
 	this.removeAllTags = async function () {
 		if (Services.prompt.confirm(null, "", Zotero.getString('pane.item.tags.removeAll'))) {
 			_lastItem.setTags([]);

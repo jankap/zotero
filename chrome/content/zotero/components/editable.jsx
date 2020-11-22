@@ -80,10 +80,10 @@ class Editable extends React.PureComponent {
 	}
 
 	render() {
-		const { isDisabled, isReadOnly } = this.props;
+		const { isDisabled } = this.props;
 		return (
 			<div
-				tabIndex={ (isDisabled || isReadOnly) ? null : this.isActive ? null : 0 }
+				tabIndex={ isDisabled ? null : this.isActive ? null : 0 }
 				onClick={ event => this.props.onClick(event) }
 				onFocus={ event => this.props.onFocus(event) }
 				onMouseDown={ event => this.props.onMouseDown(event) }

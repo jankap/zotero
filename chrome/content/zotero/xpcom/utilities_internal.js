@@ -1744,7 +1744,8 @@ Zotero.Utilities.Internal = {
 			let args = [
 				'chrome://zotero/content/preferences/preferences.xul',
 				'zotero-prefs',
-				'chrome,titlebar,toolbar,centerscreen',
+				'chrome,titlebar,toolbar,centerscreen,'
+					+ Zotero.Prefs.get('browser.preferences.instantApply', true) ? 'dialog=no' : 'modal',
 				io
 			];
 			

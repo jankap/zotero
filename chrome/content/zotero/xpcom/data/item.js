@@ -2839,7 +2839,7 @@ Zotero.defineProperty(Zotero.Item.prototype, 'attachmentFilename', {
 		}
 		var prefixedPath = path.match(/^(?:attachments|storage):(.*)$/);
 		if (prefixedPath) {
-			return prefixedPath[1].split('/').pop();
+			return prefixedPath[1];
 		}
 		return OS.Path.basename(path);
 	},

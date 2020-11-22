@@ -895,11 +895,6 @@ describe("Zotero.Item", function () {
 	})
 	
 	describe("#attachmentFilename", function () {
-		afterEach(function () {
-			Zotero.Prefs.set('saveRelativeAttachmentPath', false)
-			Zotero.Prefs.clear('baseAttachmentPath')
-		});
-		
 		it("should get and set a filename for a stored file", function* () {
 			var filename = "test.txt";
 			
@@ -930,42 +925,12 @@ describe("Zotero.Item", function () {
 			assert.equal(item.getFilePath(), file.path);
 		});
 		
-		it("should get a filename for a base-dir-relative file", function () {
-			var dir = getTestDataDirectory().path;
-			Zotero.Prefs.set('saveRelativeAttachmentPath', true)
-			Zotero.Prefs.set('baseAttachmentPath', dir)
+		it.skip("should get and set a filename for a base-dir-relative file", function* () {
 			
-			var file = OS.Path.join(dir, 'test.png');
-			
-			var item = new Zotero.Item('attachment');
-			item.attachmentLinkMode = 'linked_file';
-			item.attachmentPath = file;
-			
-			assert.equal(item.attachmentFilename, 'test.png');
-		});
-		
-		it("should get a filename for a base-dir-relative file in a subdirectory", function () {
-			var dir = getTestDataDirectory().path;
-			var baseDir = OS.Path.dirname(dir);
-			Zotero.Prefs.set('saveRelativeAttachmentPath', true)
-			Zotero.Prefs.set('baseAttachmentPath', baseDir)
-			
-			var file = OS.Path.join(dir, 'test.png');
-			
-			var item = new Zotero.Item('attachment');
-			item.attachmentLinkMode = 'linked_file';
-			item.attachmentPath = file;
-			
-			assert.equal(item.attachmentFilename, 'test.png');
-		});
+		})
 	})
 	
 	describe("#attachmentPath", function () {
-		afterEach(function () {
-			Zotero.Prefs.set('saveRelativeAttachmentPath', false)
-			Zotero.Prefs.clear('baseAttachmentPath')
-		});
-		
 		it("should return an absolute path for a linked attachment", function* () {
 			var file = getTestDataDirectory();
 			file.append('test.png');
@@ -983,6 +948,7 @@ describe("Zotero.Item", function () {
 		
 		it("should set a prefixed relative path for a path within the defined base directory", function* () {
 			var dir = getTestDataDirectory().path;
+			var dirname = OS.Path.basename(dir);
 			var baseDir = OS.Path.dirname(dir);
 			Zotero.Prefs.set('saveRelativeAttachmentPath', true)
 			Zotero.Prefs.set('baseAttachmentPath', baseDir)
@@ -994,10 +960,14 @@ describe("Zotero.Item", function () {
 			item.attachmentPath = file;
 			
 			assert.equal(item.attachmentPath, "attachments:data/test.png");
+			
+			Zotero.Prefs.set('saveRelativeAttachmentPath', false)
+			Zotero.Prefs.clear('baseAttachmentPath')
 		})
 		
 		it("should return a prefixed path for a linked attachment within the defined base directory", function* () {
 			var dir = getTestDataDirectory().path;
+			var dirname = OS.Path.basename(dir);
 			var baseDir = OS.Path.dirname(dir);
 			Zotero.Prefs.set('saveRelativeAttachmentPath', true)
 			Zotero.Prefs.set('baseAttachmentPath', baseDir)
@@ -1009,6 +979,9 @@ describe("Zotero.Item", function () {
 			});
 			
 			assert.equal(item.attachmentPath, "attachments:data/test.png");
+			
+			Zotero.Prefs.set('saveRelativeAttachmentPath', false)
+			Zotero.Prefs.clear('baseAttachmentPath')
 		})
 	})
 	

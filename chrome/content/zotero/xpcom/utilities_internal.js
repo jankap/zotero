@@ -1057,7 +1057,7 @@ Zotero.Utilities.Internal = {
 					creatorType: possibleCreatorType
 				};
 				if (value.includes('||')) {
-					let [last, first] = value.split(/\s*\|\|\s*/);
+					let [first, last] = value.split(/\s*\|\|\s*/);
 					c.firstName = first;
 					c.lastName = last;
 				}

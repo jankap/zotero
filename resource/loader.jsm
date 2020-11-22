@@ -758,9 +758,6 @@ const Require = iced(function Require(loader, requirer) {
   }
 
   function _require(id) {
-    // Fix require() from react-autosuggest
-    if (id == 'React') id = 'react';
-    
     let { uri, requirement } = getRequirements(id);
     let module = null;
     // If module is already cached by loader then just use it.

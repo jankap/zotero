@@ -713,13 +713,6 @@ function ZoteroProtocolHandler() {
 	
 	
 	/**
-	 * Select an item
-	 *
-	 * zotero://select/library/items/[itemKey]
-	 * zotero://select/groups/[groupID]/items/[itemKey]
-	 *
-	 * Deprecated:
-	 *
 	 * zotero://select/[type]/0_ABCD1234
 	 * zotero://select/[type]/1234 (not consistent across synced machines)
 	 */

@@ -4643,13 +4643,12 @@ Zotero.Item.prototype.migrateExtraFields = function () {
 		Zotero.debug("Item Type: " + itemType);
 	}
 	if (fields.size) {
-		Zotero.debug("Fields:\n\n" + Array.from(fields.entries()).map(x => `${x[0]}: ${x[1]}`).join("\n"));
+		Zotero.debug(Array.from(fields.entries()));
 	}
 	if (creators.length) {
-		Zotero.debug("Creators:");
 		Zotero.debug(creators);
 	}
-	Zotero.debug("Remaining Extra:\n\n" + extra);
+	Zotero.debug(extra);
 	
 	return true;
 }

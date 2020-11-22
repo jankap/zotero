@@ -86,7 +86,7 @@ Zotero.DataDirectory = {
 				dataDir = dir;
 			}
 		}
-		else if (Zotero.Prefs.get('useDataDir') && Zotero.Prefs.get('dataDir')) {
+		else if (Zotero.Prefs.get('useDataDir')) {
 			let prefVal = Zotero.Prefs.get('dataDir');
 			// Convert old persistent descriptor pref to string path and clear obsolete lastDataDir pref
 			//

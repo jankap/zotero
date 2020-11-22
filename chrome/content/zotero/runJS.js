@@ -68,9 +68,6 @@ window.addEventListener('keypress', function (event) {
 		run();
 		event.stopPropagation();
 	}
-	else if (event.key == 'w') {
-		window.close();
-	}
 });
 
 var shortcut = Zotero.isMac ? 'Cmd-R' : 'Ctrl+R';

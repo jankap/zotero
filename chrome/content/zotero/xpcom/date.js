@@ -263,9 +263,7 @@ Zotero.Date = new function(){
 			order: ''
 		};
 		
-		if (typeof string == 'string' || typeof string == 'number') {
-			string = Zotero.Utilities.trimInternal(string.toString());
-		}
+		string = Zotero.Utilities.trimInternal(string.toString());
 		
 		// skip empty things
 		if(!string) {

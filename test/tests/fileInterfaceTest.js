@@ -10,13 +10,11 @@ describe("Zotero_File_Interface", function() {
         win.close();
     });
 
-    it('should import all types and fields into a new collection', async function () {
+    it('should import a file into a collection', function* () {
         this.timeout(10000);
         let testFile = getTestDataDirectory();
         testFile.append("allTypesAndFields.js");
-        await win.Zotero_File_Interface.importFile({
-        	file: testFile
-        });
+        yield win.Zotero_File_Interface.importFile(testFile);
 
         let importedCollection = Zotero.Collections.getByLibrary(
 			Zotero.Libraries.userLibraryID
@@ -40,26 +38,8 @@ describe("Zotero_File_Interface", function() {
             delete trueItem.key;
             delete trueItem.collections;
         }
-        assert.deepEqual(savedItems, trueItems, "saved items match inputs");
+        assert.deepEqual(savedItems, trueItems, "saved items match inputs")
     });
-    
-    
-    it("should import RIS into selected collection", async function () {
-    	var collection = await createDataObject('collection');
-    	
-        var testFile = OS.Path.join(getTestDataDirectory().path, 'book_and_child_note.ris');
-        await win.Zotero_File_Interface.importFile({
-        	file: testFile,
-        	createNewCollection: false
-        });
-        
-        var items = collection.getChildItems();
-        assert.lengthOf(items, 1);
-        var childNotes = items[0].getNotes();
-        assert.lengthOf(childNotes, 1);
-        assert.equal(Zotero.Items.get(childNotes[0]).getNote(), '<p>Child</p>');
-    });
-    
     
 	it('should import an item and snapshot from Zotero RDF', function* () {
 		var tmpDir = yield getTempDirectory();
@@ -73,9 +53,7 @@ describe("Zotero_File_Interface", function() {
 		);
 		
 		var promise = waitForItemEvent('add');
-		yield win.Zotero_File_Interface.importFile({
-			file: rdfFile
-		});
+		yield win.Zotero_File_Interface.importFile(Zotero.File.pathToFile(rdfFile))
 		var ids = yield promise;
 		// Notifications are batched
 		assert.lengthOf(ids, 2);
@@ -100,9 +78,7 @@ describe("Zotero_File_Interface", function() {
 		var modsFile = OS.Path.join(getTestDataDirectory().path, "mods.xml");
 		
 		var promise = waitForItemEvent('add');
-		yield win.Zotero_File_Interface.importFile({
-			file: modsFile
-		});
+		yield win.Zotero_File_Interface.importFile(Zotero.File.pathToFile(modsFile));
 		var ids = yield promise;
 		assert.lengthOf(ids, 1);
 		

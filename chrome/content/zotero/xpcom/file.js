@@ -976,10 +976,8 @@ Zotero.File = new function(){
 		});
 		
 		return this.iterateDirectory(source, function (entry) {
-			return entry.isDir
-				? this.copyDirectory(entry.path, OS.Path.join(target, entry.name))
-				: OS.File.copy(entry.path, OS.Path.join(target, entry.name));
-		}.bind(this))
+			return OS.File.copy(entry.path, OS.Path.join(target, entry.name));
+		})
 	});
 	
 	

@@ -956,7 +956,6 @@ Zotero.Sync.Data.Local = {
 								);
 								// Transfer properties that aren't in the changeset
 								['version', 'dateAdded', 'dateModified'].forEach(x => {
-									if (jsonData[x] === undefined) return;
 									if (jsonDataLocal[x] !== jsonData[x]) {
 										Zotero.debug(`Applying remote '${x}' value`);
 									}
@@ -1500,7 +1499,6 @@ Zotero.Sync.Data.Local = {
 		Zotero.debug("CHANGESET2");
 		Zotero.debug(changeset2);
 		
-		const isAutoMergeType = objectType != 'item';
 		var conflicts = [];
 		var matchedLocalChanges = new Set();
 		
@@ -1604,7 +1602,7 @@ Zotero.Sync.Data.Local = {
 				// Automatically apply remote changes if both items are in trash and for non-items,
 				// even if in conflict
 				if ((objectType == 'item' && currentJSON.deleted && newJSON.deleted)
-						|| isAutoMergeType) {
+						|| objectType != 'item') {
 					continue;
 				}
 				
@@ -1615,23 +1613,12 @@ Zotero.Sync.Data.Local = {
 			}
 		}
 		
-		// If there were local changes that weren't made remotely as well, the object needs to be
-		// kept as unsynced
-		var localChanged = changeset1.length > matchedLocalChanges.size;
-		
-		// If we're applying remote changes automatically, only consider the local object as changed
-		// if fields were changed that weren't changed remotely
-		if (isAutoMergeType && localChanged) {
-			let remoteFields = new Set(changeset2.map(x => x.field));
-			if (changeset1.every(x => remoteFields.has(x.field))) {
-				localChanged = false;
-			}
-		}
-		
 		return {
 			changes: changeset2,
 			conflicts,
-			localChanged
+			// If there were local changes that weren't made remotely as well, the item needs to be
+			// kept as unsynced
+			localChanged: changeset1.length > matchedLocalChanges.size
 		};
 	},
 	

@@ -4006,23 +4006,7 @@ Zotero.Item.prototype.clone = function (libraryID, options = {}) {
 	
 	if (sameLibrary) {
 		// DEBUG: this will add reverse-only relateds too
-		let relations = this.getRelations();
-		
-		// Only include certain relations
-		let predicates = [
-			Zotero.Relations.relatedItemPredicate,
-		];
-		let any = false;
-		let newRelations = {};
-		for (let predicate of predicates) {
-			if (relations[predicate]) {
-				newRelations[predicate] = relations[predicate];
-				any = true;
-			}
-		}
-		if (any) {
-			newItem.setRelations(newRelations);
-		}
+		newItem.setRelations(this.getRelations());
 	}
 	
 	return newItem;

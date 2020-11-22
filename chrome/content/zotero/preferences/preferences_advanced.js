@@ -569,27 +569,12 @@ Zotero_Preferences.Attachment_Base_Directory = {
 			return false;
 		}
 		
-		try {
-			return await this.changePath(newPath);
-		}
-		catch (e) {
-			Zotero.logError(e);
-			Zotero.alert(null, Zotero.getString('general.error'), e.message);
-		}
+		return this.changePath(newPath);
 	},
 	
 	
 	changePath: Zotero.Promise.coroutine(function* (basePath) {
 		Zotero.debug(`New base directory is ${basePath}`);
-		
-		if (Zotero.File.directoryContains(Zotero.DataDirectory.dir, basePath)) {
-			throw new Error(
-				Zotero.getString(
-					'zotero.preferences.advanced.baseDirectory.withinDataDir',
-					Zotero.appName
-				)
-			);
-		}
 		
 		// Find all current attachments with relative attachment paths
 		var sql = "SELECT itemID FROM itemAttachments WHERE linkMode=? AND path LIKE ?";
@@ -708,7 +693,7 @@ Zotero_Preferences.Attachment_Base_Directory = {
 			return false;
 		}
 		
-		// Set new base directory
+		// Set new data directory
 		Zotero.debug("Setting base directory to " + basePath);
 		Zotero.Prefs.set('baseAttachmentPath', basePath);
 		Zotero.Prefs.set('saveRelativeAttachmentPath', true);

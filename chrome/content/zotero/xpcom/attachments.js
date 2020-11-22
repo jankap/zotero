@@ -810,6 +810,7 @@ Zotero.Attachments = new function(){
 				
 				Zotero.Fulltext.queueItem(attachmentItem);
 				
+				// DEBUG: Does this fail if 'storage' is symlinked to another drive?
 				destDir = this.getStorageDirectory(attachmentItem).path;
 				yield OS.File.move(tmpDir, destDir);
 			}.bind(this));

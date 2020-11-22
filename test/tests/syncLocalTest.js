@@ -45,12 +45,11 @@ describe("Zotero.Sync.Data.Local", function() {
 			var handled = false;
 			waitForDialog(function (dialog) {
 				var text = dialog.document.documentElement.textContent;
-				var matches = text.match(/“[^”]*”/g);
-				assert.equal(matches.length, 4);
-				assert.equal(matches[0], "“A”");
-				assert.equal(matches[1], "“B”");
-				assert.equal(matches[2], "“A”");
-				assert.equal(matches[3], "“A”");
+				var matches = text.match(/‘[^’]*’/g);
+				assert.equal(matches.length, 3);
+				assert.equal(matches[0], "‘A’");
+				assert.equal(matches[1], "‘B’");
+				assert.equal(matches[2], "‘A’");
 				
 				dialog.document.getElementById('zotero-hardConfirmationDialog-checkbox').checked = true;
 				dialog.document.getElementById('zotero-hardConfirmationDialog-checkbox')

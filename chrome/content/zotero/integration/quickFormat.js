@@ -521,7 +521,7 @@ var Zotero_QuickFormat = new function () {
 		if(item.firstCreator) author = authorDate = item.firstCreator;
 		var date = item.getField("date", true, true);
 		if(date && (date = date.substr(0, 4)) !== "0000") {
-			authorDate += " (" + parseInt(date) + ")";
+			authorDate += " ("+date+")";
 		}
 		authorDate = authorDate.trim();
 		if(authorDate) nodes.push(authorDate);
@@ -647,7 +647,7 @@ var Zotero_QuickFormat = new function () {
 		// Date
 		var date = item.getField("date", true, true);
 		if(date && (date = date.substr(0, 4)) !== "0000") {
-			str += ", " + parseInt(date);
+			str += ", "+date;
 		}
 		
 		// Locator

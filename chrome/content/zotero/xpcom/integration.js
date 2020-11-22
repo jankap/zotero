@@ -1270,8 +1270,6 @@ Zotero.Integration.Fields.prototype.addEditCitation = async function (field) {
 		citation, this._session.style.opt.sort_citations,
 		fieldIndexPromise, citationsByItemIDPromise, previewFn
 	);
-	Zotero.debug(`Editing citation:`);
-	Zotero.debug(JSON.stringify(citation.toJSON()));
 	
 	if (Zotero.Prefs.get("integration.useClassicAddCitationDialog")) {
 		Zotero.Integration.displayDialog('chrome://zotero/content/integration/addCitationDialog.xul',

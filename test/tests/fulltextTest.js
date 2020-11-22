@@ -185,68 +185,62 @@ describe("Zotero.Fulltext", function () {
 			Zotero.Prefs.clear('fulltext.pdfMaxPages');
 		});
 		
-		it("should store data in .zotero-ft-unprocessed file", async function () {
-			var item = await importFileAttachment('test.pdf');
+		it("should store data in .zotero-ft-unprocessed file", function* () {
+			var item = yield importFileAttachment('test.pdf');
 			
 			var processorCacheFile = Zotero.Fulltext.getItemProcessorCacheFile(item).path;
 			var itemCacheFile = Zotero.Fulltext.getItemCacheFile(item).path;
-			await Zotero.File.putContentsAsync(itemCacheFile, "Test");
+			yield Zotero.File.putContentsAsync(itemCacheFile, "Test");
 			
-			var version = 5;
-			await Zotero.Fulltext.setItemContent(
+			yield Zotero.Fulltext.setItemContent(
 				item.libraryID,
 				item.key,
 				{
 					content: "Test",
-					indexedPages: 4,
-					totalPages: 4
+					indexedChars: 4,
+					totalChars: 4
 				},
-				version
+				5
 			);
 			
-			assert.equal(await Zotero.Fulltext.getItemVersion(item.id), 0);
+			assert.equal((yield Zotero.Fulltext.getItemVersion(item.id)), 0);
 			assert.equal(
-				await Zotero.DB.valueQueryAsync("SELECT synced FROM fulltextItems WHERE itemID=?", item.id),
-				Zotero.FullText.SYNC_STATE_TO_PROCESS
+				yield Zotero.DB.	valueQueryAsync("SELECT synced FROM fulltextItems WHERE itemID=?", item.id),
+				2 // to process
 			);
-			assert.isTrue(await OS.File.exists(processorCacheFile));
+			assert.isTrue(yield OS.File.exists(processorCacheFile));
 		});
 		
 		
-		it("should update the version if the local version is 0 but the text matches", async function () {
-			var item = await importFileAttachment('test.pdf');
+		it("should update the version if the local version is 0 but the text matches", function* () {
+			var item = yield importFileAttachment('test.pdf');
 			
-			await Zotero.DB.queryAsync(
-				"REPLACE INTO fulltextItems (itemID, version, indexedPages, totalPages, synced) "
-					+ "VALUES (?, 0, 4, 4, ?)",
-				[item.id, Zotero.FullText.SYNC_STATE_UNSYNCED]
+			yield Zotero.DB.queryAsync(
+				"REPLACE INTO fulltextItems (itemID, version, synced) VALUES (?, 0, ?)",
+				[item.id, 0] // to process
 			);
 			
-			var processorCacheFile = Zotero.FullText.getItemProcessorCacheFile(item).path;
-			var itemCacheFile = Zotero.FullText.getItemCacheFile(item).path;
-			await Zotero.File.putContentsAsync(itemCacheFile, "Test");
+			var processorCacheFile = Zotero.Fulltext.getItemProcessorCacheFile(item).path;
+			var itemCacheFile = Zotero.Fulltext.getItemCacheFile(item).path;
+			yield Zotero.File.putContentsAsync(itemCacheFile, "Test");
 			
-			var version = 5;
-			await Zotero.FullText.setItemContent(
+			yield Zotero.Fulltext.setItemContent(
 				item.libraryID,
 				item.key,
 				{
 					content: "Test",
-					indexedPages: 4,
-					totalPages: 4
+					indexedChars: 4,
+					totalChars: 4
 				},
-				version
+				5
 			);
 			
-			assert.equal(await Zotero.FullText.getItemVersion(item.id), version);
+			assert.equal((yield Zotero.Fulltext.getItemVersion(item.id)), 5);
 			assert.equal(
-				await Zotero.DB.valueQueryAsync("SELECT synced FROM fulltextItems WHERE itemID=?", item.id),
-				Zotero.FullText.SYNC_STATE_IN_SYNC
+				yield Zotero.DB.	valueQueryAsync("SELECT synced FROM fulltextItems WHERE itemID=?", item.id),
+				1 // in sync
 			);
-			var { indexedPages, total } = await Zotero.FullText.getPages(item.id);
-			assert.equal(indexedPages, 4);
-			assert.equal(total, 4);
-			assert.isFalse(await OS.File.exists(processorCacheFile));
+			assert.isFalse(yield OS.File.exists(processorCacheFile));
 		});
 	});
 })

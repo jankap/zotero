@@ -1654,7 +1654,7 @@ Zotero.Utilities = {
 			zoteroType = 'videoRecording';
 		}
 		else {
-			zoteroType = Zotero.Schema.CSL_TYPE_MAPPINGS_REVERSE[cslItem.type][0];
+			zoteroType = Zotero.Schema.CSL_TYPE_MAPPINGS_REVERSE[cslItem.type];
 		}
 		
 		if(!zoteroType) zoteroType = "document";

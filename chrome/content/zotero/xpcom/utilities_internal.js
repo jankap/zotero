@@ -955,6 +955,14 @@ Zotero.Utilities.Internal = {
 		// Build `Map`s of normalized types/fields, including CSL variables, to built-in types/fields
 		//
 		
+		// Built-in item types
+		var itemTypes = new Map(Zotero.ItemTypes.getAll().map(x => [this._normalizeExtraKey(x.name), x.name]));
+		// CSL types
+		for (let i in Zotero.Schema.CSL_TYPE_MAPPINGS) {
+			let cslType = Zotero.Schema.CSL_TYPE_MAPPINGS[i];
+			itemTypes.set(cslType.toLowerCase(), i);
+		}
+		
 		// For fields we use arrays, because there can be multiple possibilities
 		//
 		// Built-in fields
@@ -982,65 +990,40 @@ Zotero.Utilities.Internal = {
 		var keepLines = [];
 		var skipKeys = new Set();
 		var lines = extra.split(/\n/g);
-		
-		var getKeyAndValue = (line) => {
+		for (let line of lines) {
 			let parts = line.match(/^([a-z][a-z -_]+):(.+)/i);
 			// Old citeproc.js cheater syntax;
 			if (!parts) {
 				parts = line.match(/^{:([a-z -_]+):(.+)}/i);
 			}
 			if (!parts) {
-				return [null, null];
+				keepLines.push(line);
+				continue;
 			}
 			let [_, originalField, value] = parts;
+			
 			let key = this._normalizeExtraKey(originalField);
-			value = value.trim();
-			return [key, value];
-		};
-		
-		// Extract item type from 'type:' lines
-		lines = lines.filter((line) => {
-			let [key, value] = getKeyAndValue(line);
-			
-			if (!key
-					|| key != 'type'
-					|| skipKeys.has(key)
-					// Ignore 'type: note' and 'type: attachment'
-					|| ['note', 'attachment'].includes(value)) {
-				return true;
+			if (skipKeys.has(key)) {
+				keepLines.push(line);
+				continue;
 			}
+			value = value.trim();
 			
-			// See if it's a Zotero type
-			let possibleType = Zotero.ItemTypes.getName(value);
-			
-			// If not, see if it's a CSL type
-			if (!possibleType && Zotero.Schema.CSL_TYPE_MAPPINGS_REVERSE[value]) {
-				if (item) {
-					let currentType = Zotero.ItemTypes.getName(itemTypeID);
-					// If the current item type is valid for the given CSL type, remove the line
-					if (Zotero.Schema.CSL_TYPE_MAPPINGS_REVERSE[value].includes(currentType)) {
-						return false;
+			if (key == 'type') {
+				let possibleType = itemTypes.get(value);
+				if (possibleType) {
+					// Ignore 'type: note' and 'type: attachment'
+					if (['note', 'attachment'].includes(possibleType)) {
+						keepLines.push(line);
+						continue;
+					}
+					// Ignore item type that's the same as the item
+					if (!item || possibleType != Zotero.ItemTypes.getName(itemTypeID)) {
+						itemType = possibleType;
+						skipKeys.add(key);
+						continue;
 					}
 				}
-				// Use first mapped Zotero type for CSL type
-				possibleType = Zotero.Schema.CSL_TYPE_MAPPINGS_REVERSE[value][0];
-			}
-			
-			if (possibleType) {
-				itemType = possibleType;
-				itemTypeID = Zotero.ItemTypes.getID(itemType);
-				skipKeys.add(key);
-				return false;
-			}
-			
-			return true;
-		});
-		
-		lines = lines.filter((line) => {
-			let [key, value] = getKeyAndValue(line);
-			
-			if (!key || skipKeys.has(key)) {
-				return true;
 			}
 			
 			// Fields
@@ -1056,7 +1039,7 @@ Zotero.Utilities.Internal = {
 						if (!Zotero.ItemFields.isValidForType(fieldID, itemTypeID)
 								|| item.getField(fieldID)
 								|| additionalFields.has(possibleField)) {
-							return true;
+							continue;
 						}
 					}
 					fields.set(possibleField, value);
@@ -1069,7 +1052,7 @@ Zotero.Utilities.Internal = {
 				}
 				if (added) {
 					skipKeys.add(key);
-					return false;
+					continue;
 				}
 			}
 			
@@ -1093,24 +1076,24 @@ Zotero.Utilities.Internal = {
 							// to follow citeproc-js behavior
 							&& !item.getCreators().some(x => x.creatorType == possibleCreatorType)) {
 						creators.push(c);
-						return false;
+						continue;
 					}
 				}
 				else {
 					creators.push(c);
-					return false;
+					continue;
 				}
 			}
 			
 			// We didn't find anything, so keep the line in Extra
-			return true;
-		});
+			keepLines.push(line);
+		}
 		
 		return {
 			itemType,
 			fields,
 			creators,
-			extra: lines.join('\n')
+			extra: keepLines.join('\n')
 		};
 	},
 	

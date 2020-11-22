@@ -4423,9 +4423,7 @@ Zotero.Item.prototype.fromJSON = function (json, options = {}) {
 		}
 	}
 	
-	if (extra || extraFields.size || this.getField('extra')) {
-		this.setField('extra', Zotero.Utilities.Internal.combineExtraFields(extra, extraFields));
-	}
+	this.setField('extra', Zotero.Utilities.Internal.combineExtraFields(extra, extraFields));
 	
 	if (json.collections || this._collections.length) {
 		this.setCollections(json.collections);

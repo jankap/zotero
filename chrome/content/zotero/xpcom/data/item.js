@@ -2707,7 +2707,7 @@ Zotero.defineProperty(Zotero.Item.prototype, 'attachmentLinkMode', {
 				break;
 			
 			default:
-				throw new Error("Invalid attachment link mode '" + val
+				throw ("Invalid attachment link mode '" + val
 					+ "' in Zotero.Item.attachmentLinkMode setter");
 		}
 		
@@ -4310,13 +4310,7 @@ Zotero.Item.prototype.fromJSON = function (json, options = {}) {
 		// Attachment metadata
 		//
 		case 'linkMode':
-			let linkMode = Zotero.Attachments["LINK_MODE_" + val.toUpperCase()];
-			if (linkMode === undefined) {
-				let e = new Error(`Unknown attachment link mode '${val}'`);
-				e.name = "ZoteroInvalidDataError";
-				throw e;
-			}
-			this.attachmentLinkMode = linkMode;
+			this.attachmentLinkMode = Zotero.Attachments["LINK_MODE_" + val.toUpperCase()];
 			break;
 		
 		case 'contentType':

@@ -312,9 +312,7 @@ Zotero.Date = new function(){
 					date.order += m[4] ? 'm' : '';
 				}
 				date.year = m[6];
-				if (m[6] !== undefined) {
-					date.order += 'y';
-				}
+				date.order += 'y';
 			}
 			
 			var zeroYear = date.year && date.year.toString().startsWith('0');

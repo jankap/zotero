@@ -1032,8 +1032,7 @@ Services.scriptloader.loadSubScript("resource://zotero/polyfill.js");
 			}
 			// Launch non-HTTP URLs
 			else {
-				let schemeRE = /^([a-z][a-z0-9+.-]+):/;
-				let matches = url.match(schemeRE);
+				let matches = url.match(/^([a-z]+):/);
 				if (!matches) {
 					throw new Error(`Invalid URL '${url}'`);
 				}

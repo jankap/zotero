@@ -606,8 +606,7 @@ Zotero.Attachments = new function(){
 		var title = options.title;
 		var collections = options.collections;
 		
-		var schemeRE = /^([a-z][a-z0-9+.-]+):/;
-		var matches = url.match(schemeRE);
+		var matches = url.match(/^([a-z]+):(\/\/)?.+/);
 		if (!matches) {
 			throw new Error(`Invalid URL '${url}'`);
 		}

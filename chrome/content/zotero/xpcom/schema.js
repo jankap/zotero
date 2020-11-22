@@ -1910,7 +1910,7 @@ Zotero.Schema = new function(){
 					Zotero.logError(e);
 					// Clear flag on failure, to avoid showing an error on every startup if someone
 					// doesn't know how to deal with it
-					yield setIntegrityCheckRequired(false);
+					await setIntegrityCheckRequired(false);
 				}
 			}
 			
@@ -1919,7 +1919,7 @@ Zotero.Schema = new function(){
 		
 		// Clear flag on success
 		if (fix) {
-			yield setIntegrityCheckRequired(false);
+			await setIntegrityCheckRequired(false);
 		}
 		
 		return true;

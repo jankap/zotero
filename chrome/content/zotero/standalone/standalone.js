@@ -757,16 +757,17 @@ function openWindowByType(uri, type, features) {
 }
 
 const gXPInstallObserver = {
-	observe: function (subject, topic, data) {
-		const { installs } = subject.wrappedJSObject;
-		switch (topic) {
+	observe: function (aSubject, aTopic, aData) {
+		var installInfo = aSubject.QueryInterface(Components.interfaces.amIWebInstallInfo);
+		var win = installInfo.originatingWindow;
+		switch (aTopic) {
 			case "addon-install-disabled":
 			case "addon-install-blocked":
 			case "addon-install-failed":
-				Zotero.alert(
-					null,
-					Zotero.getString("standalone.addonInstallationFailed.title"),
-					Zotero.getString("standalone.addonInstallationFailed.body", installs[0].name));
+				var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+					.getService(Components.interfaces.nsIPromptService);
+				promptService.alert(win, Zotero.getString("standalone.addonInstallationFailed.title"),
+					Zotero.getString("standalone.addonInstallationFailed.body", installInfo.installs[0].name));
 				break;
 			/*case "addon-install-started":
 			case "addon-install-complete":*/

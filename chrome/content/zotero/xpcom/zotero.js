@@ -1028,13 +1028,8 @@ Services.scriptloader.loadSubScript("resource://zotero/polyfill.js");
 	 * Used only by Standalone
 	 */
 	this.launchURL = function (url) {
-		if (!Zotero.Utilities.isHTTPURL(url)) {
-			if (Zotero.Utilities.isHTTPURL(url, true)) {
-				url = 'http://' + url;
-			}
-			else {
-				throw new Error("launchURL() requires an HTTP(S) URL");
-			}
+		if (!url.match(/^https?/)) {
+			throw new Error("launchURL() requires an HTTP(S) URL");
 		}
 		
 		try {

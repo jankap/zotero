@@ -1043,12 +1043,6 @@ Zotero.Utilities.Internal = {
 				return true;
 			}
 			
-			// Skip for now, since the mappings to Place will be changed
-			// https://github.com/citation-style-language/zotero-bits/issues/6
-			if (key == 'event-place' || key == 'publisher-place') {
-				return true;
-			}
-			
 			// Fields
 			let possibleFields = fieldNames.get(key);
 			// No valid fields

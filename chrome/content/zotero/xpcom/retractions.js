@@ -562,6 +562,8 @@ Zotero.Retractions = {
 		}
 		
 		if (prefixesToSend.size) {
+			// TODO: Diff list and remove existing retractions that are missing
+			
 			let possibleMatches = await this._downloadPossibleMatches([...prefixesToSend]);
 			await this._addPossibleMatches(possibleMatches, true);
 		}

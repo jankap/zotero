@@ -86,10 +86,8 @@ Zotero.Translate.ItemSaver.prototype = {
 	 *     on failure or attachmentCallback(attachment, progressPercent) periodically during saving.
 	 * @param {Function} [itemsDoneCallback] A callback that is called once all top-level items are
 	 * done saving with a list of items. Will include saved notes, but exclude attachments.
-	 * @param {Function} [pendingAttachmentsCallback] A callback that is called for every
-	 * pending attachment to an item. pendingAttachmentsCallback(parentItemID, jsonAttachment)
 	 */
-	saveItems: async function (jsonItems, attachmentCallback, itemsDoneCallback, pendingAttachmentsCallback) {
+	saveItems: async function (jsonItems, attachmentCallback, itemsDoneCallback) {
 		var items = [];
 		var standaloneAttachments = [];
 		var childAttachments = [];
@@ -167,14 +165,6 @@ Zotero.Translate.ItemSaver.prototype = {
 							}
 							attachmentsToSave.push(jsonAttachment);
 							attachmentCallback(jsonAttachment, 0);
-							if (jsonAttachment.singleFile) {
-								// SingleFile attachments are saved in 'saveSingleFile'
-								// connector endpoint
-								if (pendingAttachmentsCallback) {
-									pendingAttachmentsCallback(itemID, jsonAttachment);
-								}
-								continue;
-							}
 							childAttachments.push([jsonAttachment, itemID]);
 						}
 						jsonItem.attachments = attachmentsToSave;
@@ -353,27 +343,6 @@ Zotero.Translate.ItemSaver.prototype = {
 		
 		return items;
 	},
-
-
-	/**
-	 * Save pending snapshot attachments to disk and library
-	 *
-	 * @param {Array} pendingAttachments - A list of snapshot attachments
-	 * @param {Object} pageData - Snapshot data from SingleFile
-	 * @param {Function} attachmentCallback - Callback with progress of attachments
-	 */
-	saveSnapshotAttachments: Zotero.Promise.coroutine(function* (pendingAttachments, pageData, attachmentCallback) {
-		for (let [parentItemID, attachment] of pendingAttachments) {
-			if (pageData) {
-				attachment.pageData = pageData;
-			}
-			yield this._saveAttachment(
-				attachment,
-				parentItemID,
-				attachmentCallback
-			);
-		}
-	}),
 	
 	
 	_makeJSONAttachment: function (parentID, title) {
@@ -888,6 +857,7 @@ Zotero.Translate.ItemSaver.prototype = {
 			});
 		}
 		
+		// Import from URL
 		let mimeType = attachment.mimeType ? attachment.mimeType : null;
 		let fileBaseName;
 		if (parentItemID) {
@@ -895,27 +865,11 @@ Zotero.Translate.ItemSaver.prototype = {
 			fileBaseName = Zotero.Attachments.getFileBaseNameFromItem(parentItem);
 		}
 		
+		Zotero.debug('Importing attachment from URL');
 		attachment.linkMode = "imported_url";
 		
 		attachmentCallback(attachment, 0);
 		
-		// Import from SingleFileZ Page Data
-		if (attachment.pageData) {
-			Zotero.debug('Importing attachment from SingleFileZ');
-
-			return Zotero.Attachments.importFromPageData({
-				libraryID: this._libraryID,
-				title,
-				url: attachment.url,
-				parentItemID,
-				pageData: attachment.pageData,
-				collections: !parentItemID ? this._collections : undefined,
-				saveOptions: this._saveOptions
-			});
-		}
-
-		// Import from URL
-		Zotero.debug('Importing attachment from URL');
 		return Zotero.Attachments.importFromURL({
 			libraryID: this._libraryID,
 			url: attachment.url,

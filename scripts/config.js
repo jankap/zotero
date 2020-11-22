@@ -32,17 +32,6 @@ const symlinkFiles = [
 	'!resource/react.js',
 	'!resource/react-dom.js',
 	'!resource/react-virtualized.js',
-	// Only include lib directory of singleFile
-	// Also do a little bit of manipulation similar to React
-	'!resource/SingleFileZ/**/*',
-	'resource/SingleFileZ/lib/**/*',
-	'resource/SingleFileZ/extension/lib/single-file/fetch/content/content-fetch.js',
-	'resource/SingleFileZ/extension/lib/single-file/index.js',
-	'!resource/SingleFileZ/lib/single-file/single-file-helper.js',
-	'!resource/SingleFileZ/lib/single-file/index.js',
-	'!resource/SingleFileZ/lib/single-file/single-file-core.js',
-	'!resource/SingleFileZ/lib/single-file/processors/lazy/content/content-lazy-loader.js',
-	'!resource/SingleFileZ/lib/single-file/single-file.js',
 	'update.rdf'
 ];
 
@@ -95,11 +84,6 @@ const jsFiles = [
 	'resource/react.js',
 	'resource/react-dom.js',
 	'resource/react-virtualized.js',
-	'resource/SingleFileZ/lib/single-file/single-file-helper.js',
-	'resource/SingleFileZ/lib/single-file/index.js',
-	'resource/SingleFileZ/lib/single-file/single-file-core.js',
-	'resource/SingleFileZ/lib/single-file/processors/lazy/content/content-lazy-loader.js',
-	'resource/SingleFileZ/lib/single-file/single-file.js'
 ];
 
 const scssFiles = [

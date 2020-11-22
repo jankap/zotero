@@ -1380,6 +1380,7 @@ var Zotero_QuickFormat = new function () {
 			});
 			pane = win.ZoteroPane;
 		}
+		pane.show();
 		pane.selectItem(id);
 		
 		// Pull window to foreground

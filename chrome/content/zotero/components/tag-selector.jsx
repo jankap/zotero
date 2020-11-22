@@ -2,7 +2,7 @@
 
 const React = require('react');
 const PropTypes = require('prop-types');
-const TagList = require('./tagSelector/tagSelectorList');
+const TagList = require('./tag-selector/tag-list');
 const { Button } = require('./button');
 const { IconTagSelectorMenu } = require('./icons');
 const Search = require('./search');

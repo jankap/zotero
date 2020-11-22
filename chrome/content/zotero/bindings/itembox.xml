@@ -310,7 +310,6 @@
 						}
 						
 						this.itemTypeMenu.parentNode.hidden = false;
-						this.itemTypeMenu.setAttribute('ztabindex', '0');
 					}
 					else {
 						this.itemTypeMenu.parentNode.hidden = true;
@@ -1769,10 +1768,6 @@
 								this._focusNextField(this._lastTabIndex, true);
 							}
 							else {
-								// If on the last field, allow default tab action
-								if (this._lastTabIndex == this._tabIndexMaxFields) {
-									return;
-								}
 								this._focusNextField(++this._lastTabIndex);
 							}
 							return false;
@@ -2320,14 +2315,7 @@
 						return false;
 					}
 					
-					// Drop-down needs to be focused
-					if (next.id == 'item-type-menu') {
-						next.focus();
-					}
-					// Fields need to be clicked
-					else {
-						next.click();
-					}
+					next.click();
 					
 					// 1) next.parentNode is always null for some reason
 					// 2) For some reason it's necessary to scroll to the next element when

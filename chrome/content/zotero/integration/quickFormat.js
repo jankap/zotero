@@ -38,7 +38,6 @@ var Zotero_QuickFormat = new function () {
 		separatorHeight = 0, currentLocator, currentLocatorLabel, currentSearchTime, dragging,
 		panel, panelPrefix, panelSuffix, panelSuppressAuthor, panelLocatorLabel, panelLocator,
 		panelLibraryLink, panelInfo, panelRefersToBubble, panelFrameHeight = 0, accepted = false;
-	var locatorLocked = false;
 	var _searchPromise;
 	
 	const SEARCH_TIMEOUT = 250;
@@ -221,9 +220,6 @@ var Zotero_QuickFormat = new function () {
 	 */
 	var _quickFormat = Zotero.Promise.coroutine(function* () {
 		var str = _getEditorContent();
-		if (str.match(/\s$/)) {
-			locatorLocked = true;
-		}
 		var haveConditions = false;
 		
 		const etAl = " et al.";
@@ -237,15 +233,12 @@ var Zotero_QuickFormat = new function () {
 		currentLocatorLabel = false;
 		
 		// check for adding a number onto a previous page number
-		if(!locatorLocked && numRe.test(str)) {
+		if(numRe.test(str)) {
 			// add to previous cite
 			var node = _getCurrentEditorTextNode();
 			var prevNode = node.previousSibling;
 			let citationItem = JSON.parse(prevNode && prevNode.dataset.citationItem || "null");
-			if (citationItem) {
-				if (!("locator" in citationItem)) {
-					citationItem.locator = "";
-				}
+			if (citationItem && citationItem.locator) {
 				citationItem.locator += str;
 				prevNode.dataset.citationItem = JSON.stringify(citationItem);
 				prevNode.textContent = _buildBubbleString(citationItem);
@@ -270,7 +263,6 @@ var Zotero_QuickFormat = new function () {
 						prevNode.textContent = _buildBubbleString(citationItem);
 						node.nodeValue = "";
 						_clearEntryList();
-						locatorLocked = false;
 						return;
 					}
 				}
@@ -782,7 +774,6 @@ var Zotero_QuickFormat = new function () {
 				citationItem["label"] = currentLocatorLabel;
 			}
 		}
-		locatorLocked = "locator" in citationItem;
 		
 		// get next node and clear this one
 		var node = _getCurrentEditorTextNode();
@@ -1351,7 +1342,6 @@ var Zotero_QuickFormat = new function () {
 		} else {
 			delete citationItem["suppress-author"];
 		}
-		locatorLocked = "locator" in citationItem;
 		panelRefersToBubble.dataset.citationItem = JSON.stringify(citationItem);
 		panelRefersToBubble.textContent = _buildBubbleString(citationItem);
 	};

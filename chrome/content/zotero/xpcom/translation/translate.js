@@ -1396,12 +1396,7 @@ Zotero.Translate.Base.prototype = {
 			resolved;
 		if (!m) {
 			if (this.location) {
-				if (Zotero.isFx) {
-					resolved = Services.io.newURI(this.location, "", null).resolve(url);
-				}
-				else {
-					resolved = new URL(url, this.location).toString();
-				}
+				resolved = new URL(url, this.location).toString();
 			}
 			else if (url.startsWith('//')) {
 				// Use HTTPS by default for protocol-relative URL with no associated web page

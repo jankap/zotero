@@ -1,7 +1,7 @@
 'use strict';
 
 const universalify = require('universalify');
-const sass = require('sass');
+const sass = require('node-sass');
 const globby = require('globby');
 const path = require('path');
 const fs = require('fs-extra');

@@ -2031,6 +2031,13 @@ Zotero.Utilities.Internal.activate = new function() {
 	
 	return function(win) {
 		if (Zotero.isMac) {
+			const BUNDLE_IDS = {
+				"Zotero":"org.zotero.zotero",
+				"Firefox":"org.mozilla.firefox",
+				"Aurora":"org.mozilla.aurora",
+				"Nightly":"org.mozilla.nightly"
+			};
+			
 			if (win) {
 				Components.utils.import("resource://gre/modules/ctypes.jsm");
 				win.focus();
@@ -2068,13 +2075,7 @@ Zotero.Utilities.Internal.activate = new function() {
 					);
 				}, false);
 			} else {
-				let pid = Zotero.Utilities.Internal.getProcessID();
-				let script = `
-					tell application "System Events"
-						set frontmost of the first process whose unix id is ${pid} to true
-					end tell
-				`;
-				Zotero.Utilities.Internal.executeAppleScript(script);
+				Zotero.Utilities.Internal.executeAppleScript('tell application id "'+BUNDLE_IDS[Zotero.appName]+'" to activate');
 			}
 		} else if(!Zotero.isWin && win) {
 			Components.utils.import("resource://gre/modules/ctypes.jsm");
@@ -2288,25 +2289,15 @@ Zotero.Utilities.Internal.activate = new function() {
 
 Zotero.Utilities.Internal.sendToBack = function() {
 	if (Zotero.isMac) {
-		let pid = Zotero.Utilities.Internal.getProcessID();
 		Zotero.Utilities.Internal.executeAppleScript(`
 			tell application "System Events"
-				set myProcess to first process whose unix id is ${pid}
-				if frontmost of myProcess then
-					set visible of myProcess to false
+				if frontmost of application id "org.zotero.zotero" then
+					set visible of process "Zotero" to false
 				end if
 			end tell
 		`);
 	}
 }
-
-
-Zotero.Utilities.Internal.getProcessID = function () {
-	return Components.classes["@mozilla.org/xre/app-info;1"]
-		.getService(Components.interfaces.nsIXULRuntime)
-		.processID;
-};
-
 
 /**
  *  Base64 encode / decode

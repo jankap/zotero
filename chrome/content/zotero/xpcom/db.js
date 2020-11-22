@@ -580,9 +580,7 @@ Zotero.DBConnection.prototype.queryAsync = Zotero.Promise.coroutine(function* (s
 	try {
 		let onRow = null;
 		let conn = this._getConnection(options) || (yield this._getConnectionAsync(options));
-		if (!options || !options.noParseParams) {
-			[sql, params] = this.parseQueryAndParams(sql, params);
-		}
+		[sql, params] = this.parseQueryAndParams(sql, params);
 		if (Zotero.Debug.enabled) {
 			this.logQuery(sql, params, options);
 		}

@@ -446,10 +446,7 @@ Zotero.Sync.Storage.Mode.WebDAV.prototype = {
 						yield item.saveTx({ skipAll: true });
 						// skipAll doesn't mark as unsynced, so do that separately
 						yield item.updateSynced(false);
-						return new Zotero.Sync.Storage.Result({
-							localChanges: true,
-							syncRequired: true
-						});
+						return new Zotero.Sync.Storage.Result;
 					}
 				}
 				
@@ -466,20 +463,9 @@ Zotero.Sync.Storage.Mode.WebDAV.prototype = {
 				if (smtime != mtime) {
 					let shash = item.attachmentSyncedHash;
 					if (shash && metadata.md5 && shash == metadata.md5) {
-						Zotero.debug(`Last synced mod time for item ${item.libraryKey} doesn't `
-							+ "match time on storage server but hash does -- using local file mtime");
-						
-						yield this._setStorageFileMetadata(item);
-						item.attachmentSyncedModificationTime = fmtime;
-						item.attachmentSyncState = "in_sync";
-						yield item.saveTx({ skipAll: true });
-						// skipAll doesn't mark as unsynced, so do that separately
-						yield item.updateSynced(false);
-						
-						return new Zotero.Sync.Storage.Result({
-							localChanges: true,
-							syncRequired: true
-						});
+						Zotero.debug("Last synced mod time for item " + item.libraryKey
+							+ " doesn't match time on storage server but hash does -- ignoring");
+						return new Zotero.Sync.Storage.Result;
 					}
 					
 					Zotero.logError("Conflict -- last synced file mod time for item "

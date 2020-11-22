@@ -308,7 +308,7 @@ describe("Zotero.Attachments", function() {
 	describe("#importFromDocument()", function () {
 		Components.utils.import("resource://gre/modules/FileUtils.jsm");
 		Components.utils.import("resource://zotero-unit/httpd.js");
-		var testServerPath, httpd, prefix;
+		var testServerPath, httpd;
 		var testServerPort = 16213;
 
 		before(async function () {
@@ -317,10 +317,9 @@ describe("Zotero.Attachments", function() {
 		});
 
 		beforeEach(function () {
-			prefix = Zotero.Utilities.randomString();
 			// Alternate ports to prevent exceptions not catchable in JS
-			// Use random prefix because httpd does not actually stop between tests
-			testServerPath = 'http://127.0.0.1:' + testServerPort + '/' + prefix;
+			testServerPort += (testServerPort & 1) ? 1 : -1;
+			testServerPath = 'http://127.0.0.1:' + testServerPort;
 			httpd = new HttpServer();
 			httpd.start(testServerPort);
 		});
@@ -335,7 +334,7 @@ describe("Zotero.Attachments", function() {
 			var item = yield createDataObject('item');
 
 			var uri = OS.Path.join(getTestDataDirectory().path, "snapshot");
-			httpd.registerDirectory("/" + prefix + "/", new FileUtils.File(uri));
+			httpd.registerDirectory("/", new FileUtils.File(uri));
 			
 			var deferred = Zotero.Promise.defer();
 			win.addEventListener('pageshow', () => deferred.resolve());
@@ -358,7 +357,7 @@ describe("Zotero.Attachments", function() {
 			var storageDir = Zotero.Attachments.getStorageDirectory(attachment).path;
 			var file = yield attachment.getFilePathAsync();
 			assert.equal(OS.Path.basename(file), 'index.html');
-			assert.isTrue(yield OS.File.exists(OS.Path.join(storageDir, 'images', '1.gif')));
+			assert.isTrue(yield OS.File.exists(OS.Path.join(storageDir, 'images', '2.gif')));
 			
 			// Check attachment html file contents
 			let path = OS.Path.join(storageDir, 'index.html');
@@ -367,7 +366,7 @@ describe("Zotero.Attachments", function() {
 			assert.isTrue(contents.startsWith("<html><!--\n Page saved with SingleFileZ"));
 			
 			// Check attachment binary file contents
-			path = OS.Path.join(storageDir, 'images', '1.gif');
+			path = OS.Path.join(storageDir, 'images', '2.gif');
 			assert.isTrue(yield OS.File.exists(path));
 			contents = yield Zotero.File.getBinaryContentsAsync(path);
 			let expectedPath = getTestDataDirectory();
@@ -382,7 +381,7 @@ describe("Zotero.Attachments", function() {
 
 			var url = "file://" + OS.Path.join(getTestDataDirectory().path, "snapshot", "img.gif");
 			httpd.registerPathHandler(
-				'/' + prefix + '/index.html',
+				'/index.html',
 				{
 					handle: function (request, response) {
 						response.setStatusLine(null, 200, "OK");
@@ -431,7 +430,7 @@ describe("Zotero.Attachments", function() {
 
 			var url = "file://" + OS.Path.join(getTestDataDirectory().path, "snapshot", "foobar.gif");
 			httpd.registerPathHandler(
-				'/' + prefix + '/index.html',
+				'/index.html',
 				{
 					handle: function (request, response) {
 						response.setStatusLine(null, 200, "OK");

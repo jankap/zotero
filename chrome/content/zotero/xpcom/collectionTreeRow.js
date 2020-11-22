@@ -355,10 +355,6 @@ Zotero.CollectionTreeRow.prototype.getSearchObject = Zotero.Promise.coroutine(fu
 	if (this.isTrash()) {
 		s2.addCondition('deleted', 'true');
 	}
-	// Don't search child items in "Title, Creator, Year" mode
-	if (Zotero.Prefs.get('search.quicksearch-mode') == 'titleCreatorYear') {
-		includeScopeChildren = false;
-	}
 	s2.setScope(s, includeScopeChildren);
 	
 	if (this.searchText) {

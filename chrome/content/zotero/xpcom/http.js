@@ -956,7 +956,11 @@ Zotero.HTTP = new function() {
 	
 	
 	this.getDisplayURI = function (uri) {
-		return uri.mutate().setPassword('********').finalize();
+		var disp = uri.clone();
+		if (disp.password) {
+			disp.password = "********";
+		}
+		return disp;
 	}
 	
 	

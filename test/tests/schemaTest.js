@@ -48,7 +48,13 @@ describe("Zotero.Schema", function() {
 		});
 		
 		describe("#migrateExtraFields()", function () {
-			async function migrate() {
+			it("should add a new field and migrate values from Extra", async function () {
+				var item = await createDataObject('item', { itemType: 'book' });
+				item.setField('numPages', "10");
+				item.setField('extra', 'Foo Bar: This is a value.\nnumber-of-pages: 11\nThis is another line.');
+				item.synced = true;
+				await item.saveTx();
+				
 				schema.version++;
 				schema.itemTypes.find(x => x.itemType == 'book').fields.splice(0, 1, { field: 'fooBar' })
 				var newLocales = {};
@@ -59,16 +65,6 @@ describe("Zotero.Schema", function() {
 				});
 				await Zotero.Schema._updateGlobalSchemaForTest(schema);
 				await Zotero.Schema.migrateExtraFields();
-			}
-			
-			it("should add a new field and migrate values from Extra", async function () {
-				var item = await createDataObject('item', { itemType: 'book' });
-				item.setField('numPages', "10");
-				item.setField('extra', 'Foo Bar: This is a value.\nnumber-of-pages: 11\nThis is another line.');
-				item.synced = true;
-				await item.saveTx();
-				
-				await migrate();
 				
 				assert.isNumber(Zotero.ItemFields.getID('fooBar'));
 				assert.equal(Zotero.ItemFields.getLocalizedString('fooBar'), 'Foo Bar');
@@ -93,7 +89,16 @@ describe("Zotero.Schema", function() {
 				item.synced = true;
 				await item.saveTx();
 				
-				await migrate();
+				schema.version++;
+				schema.itemTypes.find(x => x.itemType == 'book').fields.splice(0, 1, { field: 'fooBar' })
+				var newLocales = {};
+				Object.keys(schema.locales).forEach((locale) => {
+					var o = schema.locales[locale];
+					o.fields.fooBar = 'Foo Bar';
+					newLocales[locale] = o;
+				});
+				await Zotero.Schema._updateGlobalSchemaForTest(schema);
+				await Zotero.Schema.migrateExtraFields();
 				
 				var creators = item.getCreators();
 				assert.lengthOf(creators, 2);
@@ -121,7 +126,16 @@ describe("Zotero.Schema", function() {
 				item.synced = true;
 				await item.saveTx();
 				
-				await migrate();
+				schema.version++;
+				schema.itemTypes.find(x => x.itemType == 'book').fields.splice(0, 1, { field: 'fooBar' })
+				var newLocales = {};
+				Object.keys(schema.locales).forEach((locale) => {
+					var o = schema.locales[locale];
+					o.fields.fooBar = 'Foo Bar';
+					newLocales[locale] = o;
+				});
+				await Zotero.Schema._updateGlobalSchemaForTest(schema);
+				await Zotero.Schema.migrateExtraFields();
 				
 				var creators = item.getCreators();
 				assert.lengthOf(creators, 1);
@@ -141,7 +155,16 @@ describe("Zotero.Schema", function() {
 					skipEditCheck: true
 				});
 				
-				await migrate();
+				schema.version++;
+				schema.itemTypes.find(x => x.itemType == 'book').fields.splice(0, 1, { field: 'fooBar' })
+				var newLocales = {};
+				Object.keys(schema.locales).forEach((locale) => {
+					var o = schema.locales[locale];
+					o.fields.fooBar = 'Foo Bar';
+					newLocales[locale] = o;
+				});
+				await Zotero.Schema._updateGlobalSchemaForTest(schema);
+				await Zotero.Schema.migrateExtraFields();
 				
 				assert.isNumber(Zotero.ItemFields.getID('fooBar'));
 				assert.equal(item.getField('fooBar'), '');
@@ -172,7 +195,16 @@ describe("Zotero.Schema", function() {
 				item.synced = true;
 				await item.saveTx();
 				
-				await migrate();
+				schema.version++;
+				schema.itemTypes.find(x => x.itemType == 'book').fields.splice(0, 1, { field: 'fooBar' })
+				var newLocales = {};
+				Object.keys(schema.locales).forEach((locale) => {
+					var o = schema.locales[locale];
+					o.fields.fooBar = 'Foo Bar';
+					newLocales[locale] = o;
+				});
+				await Zotero.Schema._updateGlobalSchemaForTest(schema);
+				await Zotero.Schema.migrateExtraFields();
 				
 				assert.equal(item.getField('numPages'), 30);
 				var creators = item.getCreators();

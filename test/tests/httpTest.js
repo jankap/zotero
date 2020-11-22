@@ -54,11 +54,6 @@ describe("Zotero.HTTP", function () {
 		server.autoRespond = true;
 	});
 	
-	afterEach(async function () {
-		// Allow requests to settle
-		await Zotero.Promise.delay(50);
-	});
-	
 	after(function* () {
 		var defer = new Zotero.Promise.defer();
 		httpd.stop(() => defer.resolve());
@@ -178,13 +173,13 @@ describe("Zotero.HTTP", function () {
 				spy = sinon.spy(Zotero.HTTP, "_requestInternal");
 				setTimeout(() => {
 					cancel();
-				}, 80);
+				}, 50);
 				var e = await getPromiseError(
 					Zotero.HTTP.request(
 						"GET",
 						baseURL + "error",
 						{
-							errorDelayIntervals: [10, 10, 150],
+							errorDelayIntervals: [10, 10, 100],
 							cancellerReceiver: function () {
 								cancel = arguments[0];
 							}
@@ -192,7 +187,7 @@ describe("Zotero.HTTP", function () {
 					)
 				);
 				assert.instanceOf(e, Zotero.HTTP.CancelledException);
-				assert.equal(spy.callCount, 3);
+				assert.isTrue(spy.calledTwice);
 			});
 			
 			it("should obey Retry-After for 503", function* () {
@@ -229,7 +224,7 @@ describe("Zotero.HTTP", function () {
 				});
 				spy = sinon.spy(Zotero.HTTP, "_requestInternal");
 				yield Zotero.HTTP.request("GET", baseURL + "error");
-				assert.equal(3, spy.callCount);
+				assert.isTrue(spy.calledThrice);
 				// DEBUG: Why are these slightly off?
 				assert.approximately(delayStub.args[0][0], 5 * 1000, 5);
 				assert.approximately(delayStub.args[1][0], 10 * 1000, 5);

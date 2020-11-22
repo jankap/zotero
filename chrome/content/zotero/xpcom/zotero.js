@@ -1023,32 +1023,17 @@ Services.scriptloader.loadSubScript("resource://zotero/polyfill.js");
 	
 	
 	/**
-	 * Launch a URL externally, the best way we can
+	 * Launch an HTTP URL externally, the best way we can
+	 *
+	 * Used only by Standalone
 	 */
 	this.launchURL = function (url) {
 		if (!Zotero.Utilities.isHTTPURL(url)) {
 			if (Zotero.Utilities.isHTTPURL(url, true)) {
 				url = 'http://' + url;
 			}
-			// Launch non-HTTP URLs
 			else {
-				let matches = url.match(/^([a-z]+):/);
-				if (!matches) {
-					throw new Error(`Invalid URL '${url}'`);
-				}
-				let scheme = matches[1];
-				if (['javascript', 'data', 'chrome', 'resource'].includes(scheme)) {
-					throw new Error(`Invalid scheme '${scheme}'`);
-				}
-				let svc = Components.classes['@mozilla.org/uriloader/external-protocol-service;1']
-					.getService(Components.interfaces.nsIExternalProtocolService);
-				let found = {};
-				let handlerInfo = svc.getProtocolHandlerInfoFromOS(scheme, found);
-				if (!found.value) {
-					throw new Error(`Handler not found for '${scheme}' URLs`);
-				}
-				svc.loadURI(Services.io.newURI(url, null, null));
-				return;
+				throw new Error("launchURL() requires an HTTP(S) URL");
 			}
 		}
 		
@@ -1073,8 +1058,7 @@ Services.scriptloader.loadSubScript("resource://zotero/polyfill.js");
 			
 			let exec = Zotero.File.pathToFile(path);
 			if (!exec.exists()) {
-				throw new Error("Fallback executable not found -- "
-					+ "check extensions.zotero." + pref + " in about:config");
+				throw ("Fallback executable not found -- check extensions.zotero." + pref + " in about:config");
 			}
 			
 			var proc = Components.classes["@mozilla.org/process/util;1"]

@@ -857,14 +857,8 @@ Zotero.DBConnection.prototype.info = Zotero.Promise.coroutine(function* () {
 });
 
 
-Zotero.DBConnection.prototype.quickCheck = async function () {
-	var ok = await this.valueQueryAsync("PRAGMA quick_check(1)");
-	return ok == 'ok';
-};
-
-
 Zotero.DBConnection.prototype.integrityCheck = Zotero.Promise.coroutine(function* () {
-	var ok = yield this.valueQueryAsync("PRAGMA integrity_check(1)");
+	var ok = yield this.valueQueryAsync("PRAGMA integrity_check");
 	return ok == 'ok';
 });
 

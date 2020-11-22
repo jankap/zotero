@@ -37,6 +37,7 @@ const symlinkFiles = [
 	'!resource/SingleFile/**/*',
 	'resource/SingleFile/lib/**/*',
 	'resource/SingleFile/extension/lib/single-file/fetch/content/content-fetch.js',
+	'!resource/SingleFile/lib/single-file/processors/frame-tree/content/content-frame-tree.js',
 	'!resource/SingleFile/lib/single-file/single-file.js',
 	'update.rdf'
 ];
@@ -90,6 +91,7 @@ const jsFiles = [
 	'resource/react.js',
 	'resource/react-dom.js',
 	'resource/react-virtualized.js',
+	'resource/SingleFile/lib/single-file/processors/frame-tree/content/content-frame-tree.js',
 	'resource/SingleFile/lib/single-file/single-file.js'
 ];
 

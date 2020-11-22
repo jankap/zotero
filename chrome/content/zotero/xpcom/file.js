@@ -1354,9 +1354,7 @@ Zotero.File = new function(){
 			// OneDrive
 			|| path.toLowerCase().includes('onedrive')
 			// pCloud
-			|| path.toLowerCase().includes('pcloud')
-			// iCloud Drive (~/Library/Mobile Documents/com~apple~CloudDocs)
-			|| path.includes('Mobile Documents');
+			|| path.toLowerCase().includes('pcloud');
 	};
 	
 	

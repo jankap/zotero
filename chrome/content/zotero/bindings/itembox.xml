@@ -1440,8 +1440,8 @@
 						this._creatorCount--;
 						return;
 					}
-					await this.blurOpenField();
 					this.item.removeCreator(index);
+					await this.blurOpenField();
 					await this.item.saveTx();
 				}.bind(this))();
 				]]></body>

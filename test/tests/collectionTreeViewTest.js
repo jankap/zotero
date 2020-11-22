@@ -1150,7 +1150,7 @@ describe("Zotero.CollectionTreeView", function() {
 				group1.editable = false;
 				await group1.saveTx();
 				
-				var group2 = await createGroup();
+				var group2 = await getGroup();
 				
 				await cv.selectCollection(collection.id);
 				await waitForItemsLoad(win);

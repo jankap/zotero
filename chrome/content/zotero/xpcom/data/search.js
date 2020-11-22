@@ -1390,21 +1390,7 @@ Zotero.Search.prototype._buildQuery = Zotero.Promise.coroutine(function* () {
 						
 						if (parseDate){
 							var go = false;
-							let value = condition.value;
-							
-							// Parse 'yesterday'/'today'/'tomorrow'
-							let lc = value.toLowerCase();
-							if (lc == 'yesterday' || lc == Zotero.getString('date.yesterday')) {
-								value = Zotero.Date.dateToSQL(new Date(Date.now() - 1000 * 60 * 60 * 24)).substr(0, 10);
-							}
-							else if (lc == 'today' || lc == Zotero.getString('date.today')) {
-								value = Zotero.Date.dateToSQL(new Date()).substr(0, 10);
-							}
-							else if (lc == 'tomorrow' || lc == Zotero.getString('date.tomorrow')) {
-								value = Zotero.Date.dateToSQL(new Date(Date.now() + 1000 * 60 * 60 * 24)).substr(0, 10);
-							}
-							
-							let dateparts = Zotero.Date.strToDate(value);
+							var dateparts = Zotero.Date.strToDate(condition.value);
 							
 							// Search on SQL date -- underscore is
 							// single-character wildcard

@@ -4013,8 +4013,6 @@ var ZoteroPane = new function()
 				throw new Error("Item " + itemID + " is not an attachment");
 			}
 			
-			Zotero.debug("Viewing attachment " + item.libraryKey);
-			
 			if (item.attachmentLinkMode == Zotero.Attachments.LINK_MODE_LINKED_URL) {
 				this.loadURI(item.getField('url'), event);
 				continue;
@@ -4089,29 +4087,15 @@ var ZoteroPane = new function()
 				}
 			}
 			
-			let fileSyncingEnabled = Zotero.Sync.Storage.Local.getEnabledForLibrary(item.libraryID);
-			let redownload = false;
-			
-			// TEMP: If file is queued for download, download first. Starting in 5.0.85, files
-			// modified remotely get marked as SYNC_STATE_FORCE_DOWNLOAD, causing them to get
-			// downloaded at sync time even in download-as-needed mode, but this causes files
-			// modified previously to be downloaded on open.
-			if (fileExists
-					&& !isLinkedFile
-					&& fileSyncingEnabled
-					&& (item.attachmentSyncState == Zotero.Sync.Storage.Local.SYNC_STATE_TO_DOWNLOAD)) {
-				Zotero.debug("File exists but is queued for download -- re-downloading");
-				redownload = true;
-			}
-			
-			if (fileExists && !redownload) {
+			if (fileExists) {
 				Zotero.debug("Opening " + path);
 				Zotero.Notifier.trigger('open', 'file', item.id);
+				
 				launchFile(path, item.attachmentContentType);
 				continue;
 			}
 			
-			if (isLinkedFile || !fileSyncingEnabled) {
+			if (isLinkedFile || !Zotero.Sync.Storage.Local.getEnabledForLibrary(item.libraryID)) {
 				this.showAttachmentNotFoundDialog(
 					itemID,
 					path,
@@ -4125,10 +4109,7 @@ var ZoteroPane = new function()
 			}
 			
 			try {
-				let results = await Zotero.Sync.Runner.downloadFile(item);
-				if (!results || !results.localChanges) {
-					Zotero.debug("Download failed -- opening existing file");
-				}
+				await Zotero.Sync.Runner.downloadFile(item);
 			}
 			catch (e) {
 				// TODO: show error somewhere else
@@ -4149,11 +4130,12 @@ var ZoteroPane = new function()
 				return;
 			}
 			
-			Zotero.Notifier.trigger('redraw', 'item', []);
+			// check if unchanged?
+			// maybe not necessary, since we'll get an error if there's an error
 			
-			Zotero.debug("Opening " + path);
-			Zotero.Notifier.trigger('open', 'file', item.id);
-			launchFile(path, item.attachmentContentType);
+			Zotero.Notifier.trigger('redraw', 'item', []);
+			// Retry after download
+			i--;
 		}
 	});
 	

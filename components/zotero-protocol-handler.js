@@ -1036,19 +1036,24 @@ function ZoteroProtocolHandler() {
 				return;
 			}
 			
-			var opened = false;
-			if (page) {
-				try {
-					opened = await Zotero.OpenPDF.openToPage(path, page);
+			// If no page number, just open normally
+			if (!page) {
+				let zp = Zotero.getActiveZoteroPane();
+				// TODO: Open pane if closed (macOS)
+				if (zp) {
+					zp.viewAttachment([item.id]);
 				}
-				catch (e) {
-					Zotero.logError(e);
-				}
+				return;
 			}
 			
+			try {
+				var opened = Zotero.OpenPDF.openToPage(path, page);
+			}
+			catch (e) {
+				Zotero.logError(e);
+			}
 			// If something went wrong, just open PDF without page
 			if (!opened) {
-				Zotero.debug("Launching PDF without page number");
 				let zp = Zotero.getActiveZoteroPane();
 				// TODO: Open pane if closed (macOS)
 				if (zp) {

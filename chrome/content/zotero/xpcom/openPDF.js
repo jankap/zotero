@@ -56,19 +56,13 @@ Zotero.OpenPDF = {
 		}
 		else if (Zotero.isWin) {
 			handler = handler || this._getPDFHandlerWindows();
-			if (handler) {
-				Zotero.debug("Handler is " + handler);
-				// Include flags to open the PDF on a given page in various apps
-				//
-				// Adobe Acrobat: http://partners.adobe.com/public/developer/en/acrobat/PDFOpenParameters.pdf
-				// PDF-XChange: http://help.tracker-software.com/eu/default.aspx?pageid=PDFXView25:command_line_options
-				let args = ['/A', 'page=' + page, path];
-				Zotero.Utilities.Internal.exec(handler, args);
-				opened = true;
-			}
-			else {
-				Zotero.debug("No handler found");
-			}
+			// Include flags to open the PDF on a given page in various apps
+			//
+			// Adobe Acrobat: http://partners.adobe.com/public/developer/en/acrobat/PDFOpenParameters.pdf
+			// PDF-XChange: http://help.tracker-software.com/eu/default.aspx?pageid=PDFXView25:command_line_options
+			let args = ['/A', 'page=' + page, path];
+			Zotero.Utilities.Internal.exec(handler, args);
+			opened = true;
 		}
 		else if (Zotero.isLinux) {
 			if (handler.includes('evince') || handler.includes('okular')) {
@@ -182,11 +176,10 @@ Zotero.OpenPDF = {
 	//
 	/**
 	 * Get path to default pdf reader application on windows
+	 * @return {string} Path to default pdf reader application
 	 *
 	 * From getPDFReader() in ZotFile (GPL)
 	 * https://github.com/jlegewie/zotfile/blob/master/chrome/content/zotfile/utils.js
-	 *
-	 * @return {String|false} - Path to default pdf reader application, or false if none
 	 */
 	_getPDFHandlerWindows: function () {
 		var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
@@ -219,7 +212,7 @@ Zotero.OpenPDF = {
 		
 		if (!progId) {
 			wrk.close();
-			return false;
+			return;
 		}
 		
 		// Get version specific handler, if it exists
@@ -253,17 +246,14 @@ Zotero.OpenPDF = {
 		
 		if (!success) {
 			wrk.close();
-			return false;
+			return;
 		}
 		
-		try {
-			var command = wrk.readStringValue('').match(/^(?:".+?"|[^"]\S+)/);
-		}
-		catch (e) {}
+		var command = wrk.readStringValue('').match(/^(?:".+?"|[^"]\S+)/);
 		
 		wrk.close();
 		
-		if (!command) return false;
+		if (!command) return;
 		return command[0].replace(/"/g, '');
 	},
 	

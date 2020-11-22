@@ -2422,7 +2422,7 @@ var ZoteroPane = new function()
 		},
 		{
 			id: "loadReport",
-			oncommand: () => Zotero_Report_Interface.loadCollectionReport()
+			oncommand: event => Zotero_Report_Interface.loadCollectionReport(event)
 		},
 		{
 			id: "emptyTrash",
@@ -3287,7 +3287,7 @@ var ZoteroPane = new function()
 				}
 			}
 			
-			Zotero.launchURL(uri);
+			this.launchURL(uri);
 		}
 	}
 	

@@ -28,7 +28,7 @@ var Zotero_Report_Interface = new function() {
 	/*
 	 * Load a report for the currently selected collection
 	 */
-	this.loadCollectionReport = function () {
+	this.loadCollectionReport = function (event) {
 		var sortColumn = ZoteroPane_Local.getSortField();
 		var sortDirection = ZoteroPane_Local.getSortDirection();
 		var queryString = '?sort=' + sortColumn
@@ -55,14 +55,14 @@ var Zotero_Report_Interface = new function() {
 		
 		url += '/items' + queryString;
 		
-		Zotero.openInViewer(url);
+		ZoteroPane_Local.loadURI(url, event);
 	}
 	
 	
 	/*
 	 * Load a report for the currently selected items
 	 */
-	this.loadItemReport = function () {
+	this.loadItemReport = function (event) {
 		var libraryID = ZoteroPane_Local.getSelectedLibraryID();
 		var items = ZoteroPane_Local.getSelectedItems();
 		
@@ -72,6 +72,6 @@ var Zotero_Report_Interface = new function() {
 		
 		var url = 'zotero://report/' + Zotero.API.getLibraryPrefix(libraryID) + '/items'
 			+ '?itemKey=' + items.map(item => item.key).join(',');
-		Zotero.openInViewer(url);
+		ZoteroPane_Local.loadURI(url, event);
 	}
 }
